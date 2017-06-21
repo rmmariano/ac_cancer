@@ -31,13 +31,13 @@ NEo = "nao_ocorrer_effector_cell"
 
 
 -- quantidade de celulas no eixo x
-XDIM = 101
+XDIM = 101  -- dimensao do trabalho
 -- XDIM = 11
 --XDIM = 7
 --XDIM = 5
 
 -- quantidade de tempos que serao executados
-TEMPOS = 50 -- tempo do trabalho
+TEMPOS = 50  -- tempo do trabalho
 -- TEMPOS = 30  
 -- TEMPOS = 10  
 
