@@ -31,12 +31,15 @@ NEo = "nao_ocorrer_effector_cell"
 
 
 -- quantidade de celulas no eixo x
-XDIM = 11
+XDIM = 101
+-- XDIM = 11
 --XDIM = 7
 --XDIM = 5
 
 -- quantidade de tempos que serao executados
-TEMPOS = 30  -- t = 50
+TEMPOS = 50 -- tempo do trabalho
+-- TEMPOS = 30  
+-- TEMPOS = 10  
 
 
 
@@ -133,6 +136,14 @@ cell = Cell{
                         -- insere os lados escolhidos aqui, para caso sorteie todos os 4 lados e todos forem cancerigenos, entao sai do loop
                         local sides_chosen = {}
                         
+                        -- quantas vezes foi gerado um lado aleatorio
+                        local count_random_side = 1
+                        -- quantidade maxima de vezes que pode gerar um lado aleatorio
+                        -- apos isso, para evitar loop infinito, gera um lado deterministico
+                        local MAX_RANDOM_SIDE = 10
+                        
+                        local SIDES = {"top", "bottom", "left", "right"}
+                        
                         -- sides_chosen.getn(sides_chosen) --> len(sides_chosen)
                         while raffle_new_neighbor and size_of(sides_chosen) < 4 do    
                                 ::continue01::
@@ -154,18 +165,27 @@ cell = Cell{
                                 --print(">>> 2.5")
                                 
                                 
+                                -- se tentar gerar mais de 10 vezes um lado aleatorio e nao conseguir
+                                -- pega um valor deterministico da lista SIDES, para nao ir em loop infinito
+                                if count_random_side >= 10 then                                    
+                                    random_side_chosen = table.remove(SIDES, 1)                                    
+                                end
+                                
+                                
                                 
                                 -- se o lado escolhido nao tiver sido sorteado, entao insere na lista
                                 if not table_constains_value (sides_chosen, random_side_chosen) then
-                                    table.insert(sides_chosen, random_side_chosen)
+                                        table.insert(sides_chosen, random_side_chosen)
                                 -- senao volta ao loop para sortear outro
                                 else
                                     
-                                    print("\n\n random_side_chosen: ", random_side_chosen)
-                                    print("sides_chosen: ")
-                                    print_table(sides_chosen)
-                                    
-                                    goto continue01
+                                        print("\n\n random_side_chosen: ", random_side_chosen)
+                                        print("sides_chosen: ")
+                                        print_table(sides_chosen)
+                                        
+                                        count_random_side = count_random_side + 1
+                                        
+                                        goto continue01
                                 end
                                 
                                 
