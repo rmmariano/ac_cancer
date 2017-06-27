@@ -1,21 +1,42 @@
-k1_prob_reacao = 0.74  -- probabilidade da celula cancerigena se multiplicar
+-- ############## CONSTANTES ############## 
+
+
+
+-- ####### PROBABILIDADES ####### 
+
+-- k1: probabilidade da celula cancerigena se multiplicar
+k1_prob_reacao = 0.74 
 k1 = "reacao_celula_cancerigena_se_multiplicar"
 
-k2_prob_reacao = 0.2  -- probabilidade de ocorrer effector cell
+-- k2: probabilidade de ocorrer effector cell
+k2_prob_reacao = 0.2 
 k2 = "reacao_effector_cell"
 
+-- probabilidade de nao ocorrencia de k1 e k2
 prob_nao_acontecer_k1_e_k2 = 1 - (k1_prob_reacao + k2_prob_reacao)
 nao_ocorrer_k1_e_k2 = "nao_ocorrer_k1_e_k2"
 
 
---[[
-k3 = 0.4  -- same value for k3 and k4
-k4 = k3
+-- k3: probabilidade do complexo morrer
+k3_prob_reacao = 0.4 
+k3 = "reacao_celula_complexa_morrer"
 
-pc = 3.85
-teta = 10^3 
---]]
+-- probabilidade de nao ocorrencia de k3
+prob_nao_acontecer_k3 = 1 - k3_prob_reacao
+nao_ocorrer_k3 = "nao_ocorrer_k3"
 
+
+-- k4: probabilidade celula morta reviver
+k4_prob_reacao = 0.4 
+k4 = "reacao_celula_morta_reviver"
+
+-- probabilidade de nao ocorrencia de k4
+prob_nao_acontecer_k4 = 1 - k4_prob_reacao
+nao_ocorrer_k4 = "nao_ocorrer_k4"
+
+
+
+-- ####### TIPO DE CELULA ####### 
 
 Normal = "normal"     -- branco (vazio) - célula normal
 C = "cancerigena"         -- pretos - células cancerigena (consideradas anormais)
@@ -30,11 +51,13 @@ Eo = "effector_cell"          -- as chamadas efector cells (por exemplo: linfóc
 NEo = "nao_ocorrer_effector_cell" 
 
 
+
+-- ####### DIMENSAO  E TEMPO ####### 
+
 -- quantidade de celulas no eixo x
 --XDIM = 101  -- dimensao do trabalho
 XDIM = 31
 -- XDIM = 11
---XDIM = 7
 --XDIM = 5
 
 -- quantidade de tempos que serao executados
@@ -45,10 +68,7 @@ TEMPOS = 10
 
 
 
---print("\n\nk1 = ", k1)
---print("k2 = ", k2)
-
-
+-- ############## FUNCOES AUXILIARES ############## 
 
 local function table_constains_value (table, value)
     for __index__, __value__ in ipairs(table) do
@@ -76,7 +96,8 @@ local function print_table (table)
 end
 
 
--- celula
+
+-- ############## CELULA ############## 
 
 cell = Cell{
         state = Random{Normal, C, D, E},
@@ -94,14 +115,36 @@ cell = Cell{
 
         execute = function(self)
             
-                local ocorrer_reacao = Random{
+                -- ocorrer k1 e k2
+                local ocorrer_reacao_k1_ou_k2 = Random{
                             reacao_celula_cancerigena_se_multiplicar = k1_prob_reacao,
                             reacao_effector_cell = k2_prob_reacao, 
                             nao_ocorrer_k1_e_k2 = prob_nao_acontecer_k1_e_k2
                     }
                 
-                local ocorrer_reacao_str = ocorrer_reacao:sample()
+                local ocorrer_reacao_k1_ou_k2_str = ocorrer_reacao_k1_ou_k2:sample()
                 
+                
+                -- ocorrer k3
+                local ocorrer_reacao_k3 = Random{
+                            reacao_celula_complexa_morrer = k3_prob_reacao,
+                            nao_ocorrer_k3 = prob_nao_acontecer_k3
+                    }
+                
+                local ocorrer_reacao_k3_str = ocorrer_reacao_k3:sample()
+                
+                
+                -- ocorrer k4
+                local ocorrer_reacao_k4 = Random{
+                            reacao_celula_morta_reviver = k4_prob_reacao,
+                            nao_ocorrer_k4 = prob_nao_acontecer_k4
+                    }
+                
+                local ocorrer_reacao_k4_str = ocorrer_reacao_k4:sample()
+                
+                
+                
+            
                 
                 --[[
                 if self.state ~= Normal then
@@ -121,7 +164,7 @@ cell = Cell{
 
                 -- se a celula for cancerigena e houver chance de multiplicar-se
                 -- k1 = "reacao_celula_cancerigena_se_multiplicar"
-                if self.state == C and ocorrer_reacao_str == k1 then
+                if self.state == C and ocorrer_reacao_k1_ou_k2_str == k1 then
                     
                     
                         --print(">>> 0")
@@ -140,6 +183,7 @@ cell = Cell{
                         
                         -- quantas vezes foi gerado um lado aleatorio
                         local count_random_side = 1
+                        
                         -- quantidade maxima de vezes que pode gerar um lado aleatorio
                         -- apos isso, para evitar loop infinito, gera um lado deterministico
                         local MAX_RANDOM_SIDE = 10
@@ -167,9 +211,10 @@ cell = Cell{
                                 --print(">>> 2.5")
                                 
                                 
-                                -- se tentar gerar mais de 10 vezes um lado aleatorio e nao conseguir
-                                -- pega um valor deterministico da lista SIDES, para nao ir em loop infinito
-                                if count_random_side >= 10 then                                    
+                                -- se tentar gerar mais de MAX_RANDOM_SIDE vezes um lado 
+                                -- aleatorio e nao conseguir, pega um valor deterministico 
+                                -- da lista SIDES, para nao ir em loop infinito
+                                if count_random_side >= MAX_RANDOM_SIDE then                                    
                                     random_side_chosen = table.remove(SIDES, 1)                                    
                                 end
                                 
@@ -268,57 +313,30 @@ cell = Cell{
                                         end
 
                                 end)
-                        
-                        
-                        
-                                print("\n >>> endfor \n\n")
-                                
-                                
-                        
+
                         end
 
-                -- se a celula for cancerigena e houver chances de effector cell,
-                -- entao celula cancerigena vira um complexo, que depois eh morta
-                -- k2 = "reacao_effector_cell"
-                elseif  self.state == C and ocorrer_reacao_str == k2 then
+                -- se a celula for cancerigena, ha uma probabilidade k2 de ocorrer um effector cell
+                -- entao celula cancerigena vira um complexo
+                elseif  self.state == C and ocorrer_reacao_k1_ou_k2_str == k2 then
                 
+                        self.state = E  -- celula complexa
+                                                
+                        
+                -- se a celula for um complexo, ha uma probabilidade k3 dela morrer
+                elseif self.state == E and ocorrer_reacao_k3_str == k3 then
+
+                        self.state = D  -- celula morta
+                        
+                        
+                -- se a celula estiver morta, ha uma probabilidade k4 dela reviver            
+                elseif self.state == D and ocorrer_reacao_k4_str == k4 then
                 
-                        --print("\nstate: ", self.state)
-                        
-
-                        self.state = E
-                        
-                        
-                        --print("\nstate: ", self.state)
-                        
-                        
-                -- se a celula for um complexo, entao ela morre
-                elseif self.state == E then
-
-                        --print("\nstate: ", self.state)
-                        
-                        
-                        self.state = D
-                        
-                        
-                        --print("\nstate: ", self.state)
-                        
-                -- se a celula estiver morta, o corpo regenera ela, formando uma normal
-                elseif self.state == D then
-
-
-                        --print("\nstate: ", self.state)
-
-                        
-                        self.state = Normal
-
-
-                        --print("\nstate: ", self.state)
+                        self.state = Normal  -- celula normal
 
 
                 --elseif self.state == Normal then
-                        --print("I'm normal :D")
-
+                        --print("I'm normal")
 
                 end
                 
@@ -327,30 +345,30 @@ cell = Cell{
 }
 
 
+-- ############## CRIA O AMBIENTE ############## 
 
 -- cria o space
-
 space = CellularSpace{
     instance = cell,
     xdim = XDIM
 }
 
+-- escolhe o tipo de vizinhanca
 space:createNeighborhood{
     strategy = "vonneumann",
     self = true
 }
 
 
+-- ############## INICIALIZACAO ############## 
 
 -- inicializa todas as celulas como normais
-
 forEachCell(space, function(cell)
         cell.state = Normal       
 end)
 
 
--- pega as 5 celulas do centro e coloca como cancerigenas
-
+--depois pega as 5 celulas do centro e coloca como cancerigenas
 mid = (XDIM - 1) / 2
 
 centralCell = space:get(mid, mid)
@@ -366,6 +384,7 @@ centralCell_left.state = C
 centralCell_right.state = C
 
 
+-- ############## CRIA O MAPA ############## 
 
 map = Map{
     target = space,
@@ -375,30 +394,21 @@ map = Map{
 }
 
 
+-- ############## EXECUCAO ############## 
 
+-- variavel para contar os tempos passados
 t = 1
 
 timer = Timer{
 	Event{action = function()            
             
-            print("\n\ntime: ", t, "\n")            
+            print("\n\nTIME: ", t, "\n")            
             
             space:synchronize()
             space:execute()            
             
-            t = t + 1
-            
-            
-            
-            -- fechar problema no tempo X
-            --[[
-            local x = 1
-            if t >= x then
-                    print("\n\n")
-                    os.exit(0)
-            end
-            --]]
-            
+            t = t + 1            
+
 	end},
 	Event{action = map}
 }
