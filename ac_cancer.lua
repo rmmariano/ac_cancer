@@ -43,12 +43,6 @@ C = "cancerigena"         -- pretos - células cancerigena (consideradas anormai
 D = "morta"                   -- verdes - células cancerigena mortas
 E = "complexo"              -- vermelhos - complexos produzidos pelo processo citotóxico, 
                                     -- ou seja, substâncias que são tóxicas as células.
-            
-Eo = "effector_cell"          -- as chamadas efector cells (por exemplo: linfócitos), que 
-                                -- são as que se ligam a uma outra causando assim a 
-                                -- alteração das suas atividades celulares (processo citotóxico)
-
-NEo = "nao_ocorrer_effector_cell" 
 
 
 
@@ -141,44 +135,23 @@ cell = Cell{
                     }
                 
                 local ocorrer_reacao_k4_str = ocorrer_reacao_k4:sample()
+
                 
-                
-                
-            
-                
-                --[[
-                if self.state ~= Normal then
-                        print("Me: (", self.x, ", ", self.y, ")")
-                        print("State: ", self.state)
-                        print("Reaction: ", ocorrer_reacao:sample())
-                end
-                
-                print("\n*********************************\n")
-                
-                print("\nMe: (", self.x, ", ", self.y, ") - state: ", self.state, " - reaction: ", ocorrer_reacao_str)
-                --]]
-                
-                
-                
+                -- print("\nMe: (", self.x, ", ", self.y, ") - state: ", self.state, " - reaction: ", ocorrer_reacao_str)
                 
 
                 -- se a celula for cancerigena e houver chance de multiplicar-se
                 -- k1 = "reacao_celula_cancerigena_se_multiplicar"
-                if self.state == C and ocorrer_reacao_k1_ou_k2_str == k1 then
-                    
-                    
-                        --print(">>> 0")
+                if self.state == C and ocorrer_reacao_k1_ou_k2_str == k1 then                        
                         
-                    
+                        -- pega a posicao dos vizinhos
                         local positions_of_neighbors = self:getPositionsOfNeighbors()
 
+                        -- verificar se necessita sortear um novo vizinho
                         local raffle_new_neighbor = true
                         
-                        
-                        --print(">>> 1")
-                        
-                        
-                        -- insere os lados escolhidos aqui, para caso sorteie todos os 4 lados e todos forem cancerigenos, entao sai do loop
+                        -- insere os lados escolhidos aqui, para caso sorteie todos os 4 lados
+                        -- e todos forem cancerigenos, entao sai do loop
                         local sides_chosen = {}
                         
                         -- quantas vezes foi gerado um lado aleatorio
@@ -192,116 +165,54 @@ cell = Cell{
                         
                         -- sides_chosen.getn(sides_chosen) --> len(sides_chosen)
                         while raffle_new_neighbor and size_of(sides_chosen) < 4 do    
-                                ::continue01::
-                                
-                                
-                            
-                                --print(">>> 2")
-                                
-                                
+                                ::continue01:: 
 
                                 local __break__ = false
                                 
+                                
                                 local random_side = Random{"top", "bottom", "left", "right"}                                
                                 
-                                local random_side_chosen = random_side.sample()
+                                local random_side_chosen = random_side.sample()                                
+
                                 
-                                
-                                
-                                --print(">>> 2.5")
-                                
-                                
-                                -- se tentar gerar mais de MAX_RANDOM_SIDE vezes um lado 
-                                -- aleatorio e nao conseguir, pega um valor deterministico 
-                                -- da lista SIDES, para nao ir em loop infinito
+                                -- se tentar gerar mais de MAX_RANDOM_SIDE vezes um lado aleatorio
+                                -- e nao conseguir, pega um valor deterministico para nao cair em loop infinito
                                 if count_random_side >= MAX_RANDOM_SIDE then                                    
                                     random_side_chosen = table.remove(SIDES, 1)                                    
-                                end
+                                end                                
                                 
                                 
-                                
-                                -- se o lado escolhido nao tiver sido sorteado, entao insere na lista
+                                -- se o lado sorteado nao tiver sido escolhido, entao insere na lista
                                 if not table_constains_value (sides_chosen, random_side_chosen) then
                                         table.insert(sides_chosen, random_side_chosen)
-                                -- senao volta ao loop para sortear outro
-                                else
-                                    
-                                        --[[
-                                        print("\n\n random_side_chosen: ", random_side_chosen)
-                                        print("sides_chosen: ")
-                                        print_table(sides_chosen)
-                                        --]]
                                         
+                                -- se o lado sorteado tiver sido escolhido, entao volta ao loop para sortear outro
+                                else                                                                            
                                         count_random_side = count_random_side + 1
                                         
                                         goto continue01
                                 end
                                 
                                 
-                                
-                                --print(">>> 2.8")
-                                
-                                
-                                
+                                -- pega um vizinho aleatorio
                                 local random_neighbor = positions_of_neighbors[random_side_chosen]
                                 
-                                
-                                
-                                --print(">>> 3")
-                                
-                                
-                                
-                                -- print("\n\n Me: (", self.x, ", ", self.y, ")")
-                                
-                                --[[
-                                
-                                print("State: ", self.state)
-                                print("Reaction: ", ocorrer_reacao:sample(), "\n")
-                                
-                                print("positions_of_neighbors top: (", positions_of_neighbors["top"].x, ", ", positions_of_neighbors["top"].y, ")")
-                                print("positions_of_neighbors bottom: (", positions_of_neighbors["bottom"].x, ", ", positions_of_neighbors["bottom"].y, ")")
-                                print("positions_of_neighbors right: (", positions_of_neighbors["right"].x, ", ", positions_of_neighbors["right"].y, ")")
-                                print("positions_of_neighbors left: (", positions_of_neighbors["left"].x, ", ", positions_of_neighbors["left"].y, ")")
-                                
-                                print("\n random_side_chosen: ", random_side_chosen)
-                                print("random_neighbor: (", random_neighbor.x, ", ", random_neighbor.y, ")")
-                                -
-                                
-                                print("\n random_side_chosen: ", random_side_chosen)
 
-                                print("\n >>> for")
-                                -]]
-                                
-                                
-                                
+                                -- percorre todos os vizinhos da celula
                                 forEachNeighbor(self, function(neigh)
                                         
                                         -- simula um break
                                         if __break__ == false then
-                                            
-                                            
-                                                
-                                                --print("\n neigh: (", neigh.x, ", ", neigh.y, ")")
-                                                --print("random_neighbor: (", random_neighbor.x, ", ", random_neighbor.y, ")")
-                                            
-                                            
-                                        
+
                                                 -- se o vizinho percorrido for igual ao sorteado
                                                 if (neigh.x == random_neighbor.x and neigh.y == random_neighbor.y) then
-                                                    
-                                                        
-                                                        --print("\n neigh (", neigh.x, ", ", neigh.y, ") was state(", neigh.state, ")")
-                                                        
-                                                    
-                                                        -- verifica se ele eh normal, se sim infecta ele
+                                                                                                        
+                                                        -- se a celula vizinha for normal, infecta ela
                                                         if neigh.state == Normal then
-                                                                neigh.state = C  
-                                                                
-                                                                
-                                                                --print("\n neigh (", neigh.x, ", ", neigh.y, ") now is state(", neigh.state, ")")
-                                                                
-                                                                
-                                                                -- nao precisa sortear um novo
+                                                                neigh.state = C   -- celula cancerigena
+
+                                                                -- nao precisa sortear um novo vizinho
+                                                                -- pq foi possivel infectar
                                                                 raffle_new_neighbor = false
                                                         end
                                                         
@@ -310,11 +221,12 @@ cell = Cell{
                                                             
                                                 end
                                             
-                                        end
+                                        end  -- __break__
 
-                                end)
+                                end)  -- forEachNeighbor
+                        
 
-                        end
+                        end  -- while
 
                 -- se a celula for cancerigena, ha uma probabilidade k2 de ocorrer um effector cell
                 -- entao celula cancerigena vira um complexo
@@ -335,6 +247,7 @@ cell = Cell{
                         self.state = Normal  -- celula normal
 
 
+                -- se a celula for normal, faz nada com ela
                 --elseif self.state == Normal then
                         --print("I'm normal")
 
@@ -343,6 +256,7 @@ cell = Cell{
                             
         end
 }
+
 
 
 -- ############## CRIA O AMBIENTE ############## 
