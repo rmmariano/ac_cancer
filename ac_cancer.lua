@@ -31,20 +31,22 @@ NEo = "nao_ocorrer_effector_cell"
 
 
 -- quantidade de celulas no eixo x
-XDIM = 101  -- dimensao do trabalho
+--XDIM = 101  -- dimensao do trabalho
+XDIM = 31
 -- XDIM = 11
 --XDIM = 7
 --XDIM = 5
 
 -- quantidade de tempos que serao executados
-TEMPOS = 50  -- tempo do trabalho
+--TEMPOS = 50  -- tempo do trabalho
 -- TEMPOS = 30  
--- TEMPOS = 10  
+TEMPOS = 10 
+--TEMPOS = 5
 
 
 
-print("\n\nk1 = ", k1)
-print("k2 = ", k2)
+--print("\n\nk1 = ", k1)
+--print("k2 = ", k2)
 
 
 
@@ -107,11 +109,11 @@ cell = Cell{
                         print("State: ", self.state)
                         print("Reaction: ", ocorrer_reacao:sample())
                 end
-                --]]
+                
                 print("\n*********************************\n")
                 
                 print("\nMe: (", self.x, ", ", self.y, ") - state: ", self.state, " - reaction: ", ocorrer_reacao_str)
-                
+                --]]
                 
                 
                 
@@ -122,7 +124,7 @@ cell = Cell{
                 if self.state == C and ocorrer_reacao_str == k1 then
                     
                     
-                        print(">>> 0")
+                        --print(">>> 0")
                         
                     
                         local positions_of_neighbors = self:getPositionsOfNeighbors()
@@ -130,7 +132,7 @@ cell = Cell{
                         local raffle_new_neighbor = true
                         
                         
-                        print(">>> 1")
+                        --print(">>> 1")
                         
                         
                         -- insere os lados escolhidos aqui, para caso sorteie todos os 4 lados e todos forem cancerigenos, entao sai do loop
@@ -150,7 +152,7 @@ cell = Cell{
                                 
                                 
                             
-                                print(">>> 2")
+                                --print(">>> 2")
                                 
                                 
 
@@ -179,9 +181,11 @@ cell = Cell{
                                 -- senao volta ao loop para sortear outro
                                 else
                                     
+                                        --[[
                                         print("\n\n random_side_chosen: ", random_side_chosen)
                                         print("sides_chosen: ")
                                         print_table(sides_chosen)
+                                        --]]
                                         
                                         count_random_side = count_random_side + 1
                                         
@@ -198,7 +202,7 @@ cell = Cell{
                                 
                                 
                                 
-                                print(">>> 3")
+                                --print(">>> 3")
                                 
                                 
                                 
@@ -216,11 +220,12 @@ cell = Cell{
                                 
                                 print("\n random_side_chosen: ", random_side_chosen)
                                 print("random_neighbor: (", random_neighbor.x, ", ", random_neighbor.y, ")")
-                                --]]
+                                -
                                 
                                 print("\n random_side_chosen: ", random_side_chosen)
 
                                 print("\n >>> for")
+                                -]]
                                 
                                 
                                 
@@ -231,8 +236,8 @@ cell = Cell{
                                             
                                             
                                                 
-                                                print("\n neigh: (", neigh.x, ", ", neigh.y, ")")
-                                                print("random_neighbor: (", random_neighbor.x, ", ", random_neighbor.y, ")")
+                                                --print("\n neigh: (", neigh.x, ", ", neigh.y, ")")
+                                                --print("random_neighbor: (", random_neighbor.x, ", ", random_neighbor.y, ")")
                                             
                                             
                                         
@@ -240,7 +245,7 @@ cell = Cell{
                                                 if (neigh.x == random_neighbor.x and neigh.y == random_neighbor.y) then
                                                     
                                                         
-                                                        print("\n neigh (", neigh.x, ", ", neigh.y, ") was state(", neigh.state, ")")
+                                                        --print("\n neigh (", neigh.x, ", ", neigh.y, ") was state(", neigh.state, ")")
                                                         
                                                     
                                                         -- verifica se ele eh normal, se sim infecta ele
@@ -248,7 +253,7 @@ cell = Cell{
                                                                 neigh.state = C  
                                                                 
                                                                 
-                                                                print("\n neigh (", neigh.x, ", ", neigh.y, ") now is state(", neigh.state, ")")
+                                                                --print("\n neigh (", neigh.x, ", ", neigh.y, ") now is state(", neigh.state, ")")
                                                                 
                                                                 
                                                                 -- nao precisa sortear um novo
@@ -278,41 +283,41 @@ cell = Cell{
                 elseif  self.state == C and ocorrer_reacao_str == k2 then
                 
                 
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
                         
 
                         self.state = E
                         
                         
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
                         
                         
                 -- se a celula for um complexo, entao ela morre
                 elseif self.state == E then
 
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
                         
                         
                         self.state = D
                         
                         
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
                         
                 -- se a celula estiver morta, o corpo regenera ela, formando uma normal
                 elseif self.state == D then
 
 
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
 
                         
                         self.state = Normal
 
 
-                        print("\nstate: ", self.state)
+                        --print("\nstate: ", self.state)
 
 
-                elseif self.state == Normal then
-                        print("I'm normal :D")
+                --elseif self.state == Normal then
+                        --print("I'm normal :D")
 
 
                 end
@@ -374,17 +379,15 @@ map = Map{
 t = 1
 
 timer = Timer{
-	Event{action = function()
+	Event{action = function()            
             
-            
-            print("\n\ntime: ", t, "\n")
-            
+            print("\n\ntime: ", t, "\n")            
             
             space:synchronize()
-            space:execute()
-            
+            space:execute()            
             
             t = t + 1
+            
             
             
             -- fechar problema no tempo X
