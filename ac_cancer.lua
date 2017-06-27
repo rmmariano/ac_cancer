@@ -52,13 +52,11 @@ E = "complexo"              -- vermelhos - complexos produzidos pelo processo ci
 --XDIM = 101  -- dimensao do trabalho
 XDIM = 31
 -- XDIM = 11
---XDIM = 5
 
 -- quantidade de tempos que serao executados
 --TEMPOS = 50  -- tempo do trabalho
 -- TEMPOS = 30  
 TEMPOS = 10 
---TEMPOS = 5
 
 
 
