@@ -49,14 +49,14 @@ E = "complexo"              -- vermelhos - complexos produzidos pelo processo ci
 -- ####### DIMENSAO  E TEMPO ####### 
 
 -- quantidade de celulas no eixo x
---XDIM = 101  -- dimensao do trabalho
-XDIM = 31
+XDIM = 101  -- dimensao do trabalho
+--XDIM = 31
 -- XDIM = 11
 
 -- quantidade de tempos que serao executados
---TEMPOS = 50  -- tempo do trabalho
+TEMPOS = 50  -- tempo do trabalho
 -- TEMPOS = 30  
-TEMPOS = 10 
+--TEMPOS = 10 
 
 
 
